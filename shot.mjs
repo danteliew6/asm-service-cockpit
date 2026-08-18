@@ -1,0 +1,11 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: 1440, height: 1250 } });
+const errs = [];
+p.on('console', m => { if (m.type()==='error') errs.push(m.text()); });
+p.on('pageerror', e => errs.push('PAGEERR '+e.message));
+await p.goto('http://localhost:8000', { waitUntil: 'networkidle', timeout: 60000 });
+await p.waitForTimeout(4500);
+await p.screenshot({ path: '/tmp/asm_dashboard.png', fullPage: true });
+console.log('ERRORS:', errs.slice(0,12).join(' | ') || 'none');
+await b.close();

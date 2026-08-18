@@ -113,8 +113,16 @@ export function DashboardPage() {
 
   // driver sliders (initialized from the baseline once loaded per account)
   const [drivers, setDrivers] = useState<Drivers | null>(null);
+  const baseDriversNum: Drivers | undefined = baseDrivers && {
+    install_base_growth_pct: Number(baseDrivers.install_base_growth_pct),
+    spares_price_uplift_pct: Number(baseDrivers.spares_price_uplift_pct),
+    contract_renewal_rate_pct: Number(baseDrivers.contract_renewal_rate_pct),
+    labor_rate_uplift_pct: Number(baseDrivers.labor_rate_uplift_pct),
+    new_tool_installs_6mo: Number(baseDrivers.new_tool_installs_6mo),
+  };
   useEffect(() => {
-    if (baseDrivers) setDrivers({ ...baseDrivers });
+    if (baseDriversNum) setDrivers({ ...baseDriversNum });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [baseDrivers]);
 
   // month options from the forecast horizon
@@ -124,29 +132,43 @@ export function DashboardPage() {
   }, [monthOptions, month]);
 
   // ---- driver-adjusted next-6-month forecast ----
-  const perToolMonthly = kpi && kpi.installed_base ? kpi.l12m_revenue / kpi.installed_base / 12 : 0;
+  const baseNext6 = kpi ? Number(kpi.next6_total) : 0;
+  const perToolMonthly = kpi && Number(kpi.installed_base) ? Number(kpi.l12m_revenue) / Number(kpi.installed_base) / 12 : 0;
   const adjustedNext6 = useMemo(() => {
     if (!kpi) return 0;
-    const base = kpi.next6_total;
-    if (!drivers || !baseDrivers) return base;
+    if (!drivers || !baseDriversNum) return baseNext6;
     const factor =
       1 +
-      ((drivers.install_base_growth_pct - baseDrivers.install_base_growth_pct) / 100) * 0.4 +
-      ((drivers.spares_price_uplift_pct - baseDrivers.spares_price_uplift_pct) / 100) * 0.52 +
-      ((drivers.labor_rate_uplift_pct - baseDrivers.labor_rate_uplift_pct) / 100) * 0.33 +
-      ((drivers.contract_renewal_rate_pct - baseDrivers.contract_renewal_rate_pct) / 100) * 0.15;
+      ((drivers.install_base_growth_pct - baseDriversNum.install_base_growth_pct) / 100) * 0.4 +
+      ((drivers.spares_price_uplift_pct - baseDriversNum.spares_price_uplift_pct) / 100) * 0.52 +
+      ((drivers.labor_rate_uplift_pct - baseDriversNum.labor_rate_uplift_pct) / 100) * 0.33 +
+      ((drivers.contract_renewal_rate_pct - baseDriversNum.contract_renewal_rate_pct) / 100) * 0.15;
     const installDelta =
-      (drivers.new_tool_installs_6mo - baseDrivers.new_tool_installs_6mo) * perToolMonthly * 6 * 0.5;
-    return Math.max(0, base * factor + installDelta);
-  }, [kpi, drivers, baseDrivers, perToolMonthly]);
+      (drivers.new_tool_installs_6mo - baseDriversNum.new_tool_installs_6mo) * perToolMonthly * 6 * 0.5;
+    return Math.max(0, baseNext6 * factor + installDelta);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [kpi, drivers, baseNext6, perToolMonthly]);
 
-  const driverDelta = kpi ? adjustedNext6 - kpi.next6_total : 0;
+  const driverDelta = kpi ? adjustedNext6 - baseNext6 : 0;
+
+  // numeric-coerced monthly rows for the bar / area charts
+  const monthlyNum = useMemo(
+    () =>
+      (monthly ?? []).map((m) => ({
+        month_label: m.month_label,
+        spares_revenue: Number(m.spares_revenue),
+        labor_revenue: Number(m.labor_revenue),
+        revenue_per_tool: Number(m.revenue_per_tool),
+        total_revenue: Number(m.total_revenue),
+      })),
+    [monthly],
+  );
 
   // ---- combined actual + forecast series for the 24-month trend ----
   const revenueSeries = useMemo(() => {
     const actuals = (monthly ?? []).map((m) => ({
       label: m.month_label,
-      actual: m.total_revenue,
+      actual: Number(m.total_revenue),
       forecast: null as number | null,
     }));
     if (actuals.length && (forecast?.length ?? 0)) {
@@ -156,7 +178,7 @@ export function DashboardPage() {
     const fc = (forecast ?? []).map((f) => ({
       label: f.month_label,
       actual: null as number | null,
-      forecast: f.total_revenue_forecast,
+      forecast: Number(f.total_revenue_forecast),
     }));
     return [...actuals, ...fc];
   }, [monthly, forecast]);
@@ -366,7 +388,7 @@ export function DashboardPage() {
               <Skeleton className="h-[240px] w-full" />
             ) : (
               <ChartContainer config={mixChartConfig} className="h-[240px] w-full">
-                <BarChart data={monthly ?? []} margin={{ left: 4, right: 8, top: 8, bottom: 0 }}>
+                <BarChart data={monthlyNum} margin={{ left: 4, right: 8, top: 8, bottom: 0 }}>
                   <CartesianGrid vertical={false} strokeDasharray="3 3" />
                   <XAxis dataKey="month_label" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} interval={2} />
                   <YAxis tickFormatter={(v) => usd(v)} tickLine={false} axisLine={false} width={52} tick={{ fontSize: 10 }} />
@@ -386,7 +408,7 @@ export function DashboardPage() {
             <Skeleton className="h-[200px] w-full" />
           ) : (
             <ChartContainer config={perToolChartConfig} className="h-[200px] w-full">
-              <AreaChart data={monthly ?? []} margin={{ left: 4, right: 8, top: 8, bottom: 0 }}>
+              <AreaChart data={monthlyNum} margin={{ left: 4, right: 8, top: 8, bottom: 0 }}>
                 <defs>
                   <linearGradient id="rpt" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="var(--color-revenue_per_tool)" stopOpacity={0.3} />
