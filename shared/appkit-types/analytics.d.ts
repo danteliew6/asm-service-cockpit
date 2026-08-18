@@ -194,6 +194,37 @@ declare module "@databricks/appkit-ui/react" {
           at_risk_tools: number;
         }>;
       };
+    spares_by_line: {
+        name: "spares_by_line";
+        parameters: {
+          /** INT - use sql.int() */
+          accountId: SQLNumberMarker;
+        };
+        result: Array<{
+          /** @sqlType STRING */
+          product_line: string;
+          /** @sqlType BIGINT */
+          tools: number;
+          /** @sqlType BIGINT */
+          annual_spares: number;
+        }>;
+      };
+    top_parts: {
+        name: "top_parts";
+        parameters: Record<string, never>;
+        result: Array<{
+          /** @sqlType STRING */
+          part_id: string;
+          /** @sqlType STRING */
+          part_name: string;
+          /** @sqlType STRING */
+          product_line: string;
+          /** @sqlType INT */
+          unit_price_usd: number;
+          /** @sqlType INT */
+          lead_time_days: number;
+        }>;
+      };
     versions: {
         name: "versions";
         parameters: Record<string, never>;

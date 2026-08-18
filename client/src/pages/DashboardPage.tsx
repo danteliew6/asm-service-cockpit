@@ -95,9 +95,10 @@ export function DashboardPage() {
   );
 
   // keep a valid account selected when region filter changes
+  // (account_id arrives as a string over JSON — compare numerically)
   useEffect(() => {
-    if (accountOptions.length && !accountOptions.some((a) => a.account_id === accountId)) {
-      setAccountId(accountOptions[0].account_id);
+    if (accountOptions.length && !accountOptions.some((a) => Number(a.account_id) === accountId)) {
+      setAccountId(Number(accountOptions[0].account_id));
     }
   }, [accountOptions, accountId]);
 

@@ -6,6 +6,7 @@ import {
   Package, Boxes, ClipboardCheck, Settings as SettingsIcon, Menu,
 } from 'lucide-react';
 import { DashboardPage } from './pages/DashboardPage';
+import { SparesForecastPage } from './pages/SparesForecastPage';
 import { ForecastReviewPage } from './pages/ForecastReviewPage';
 import { AccountsPage } from './pages/AccountsPage';
 
@@ -95,7 +96,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
 const PAGE_TITLE: Record<string, string> = {
   '/': 'Transactional Service Forecast Cockpit',
-  '/spares': 'Transactional Service Forecast Cockpit',
+  '/spares': 'Transactional Spares Forecast Cockpit',
   '/accounts': 'Service Accounts',
   '/spares-accounts': 'Service Accounts',
   '/review': 'Forecast Review',
@@ -180,7 +181,7 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { path: '/', element: <DashboardPage /> },
-      { path: '/spares', element: <DashboardPage /> },
+      { path: '/spares', element: <SparesForecastPage /> },
       { path: '/accounts', element: <AccountsPage /> },
       { path: '/spares-accounts', element: <AccountsPage /> },
       { path: '/review', element: <ForecastReviewPage /> },

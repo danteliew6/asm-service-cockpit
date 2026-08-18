@@ -125,7 +125,20 @@ createApp({
               { role: 'user', content: question },
             ],
           });
-          const answer = chat.choices?.[0]?.message?.content ?? 'No answer generated.';
+          // databricks-claude endpoints may return message.content as a string OR
+          // an array of content blocks ({type:'text',text} / {type:'reasoning'}).
+          const raw = chat.choices?.[0]?.message?.content as unknown;
+          let answer = 'No answer generated.';
+          if (typeof raw === 'string') {
+            answer = raw;
+          } else if (Array.isArray(raw)) {
+            const text = raw
+              .filter((b) => b && typeof b === 'object' && (b as { type?: string }).type === 'text')
+              .map((b) => (b as { text?: string }).text ?? '')
+              .join('\n')
+              .trim();
+            if (text) answer = text;
+          }
           res.json({ answer, sources });
         } catch (err) {
           res.status(500).json({ error: 'Assistant failed', detail: String(err) });

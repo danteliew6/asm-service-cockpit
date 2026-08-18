@@ -173,7 +173,7 @@ createApp({
 						score: Number(r[5])
 					}));
 					const context = rows.map((r, i) => `[${i + 1}] (${r[1]} · ${r[3]}) ${r[2]}\n${r[4]}`).join("\n\n");
-					const answer = (await w.servingEndpoints.query({
+					const raw = (await w.servingEndpoints.query({
 						name: LLM_ENDPOINT,
 						max_tokens: 600,
 						messages: [{
@@ -183,7 +183,13 @@ createApp({
 							role: "user",
 							content: question
 						}]
-					})).choices?.[0]?.message?.content ?? "No answer generated.";
+					})).choices?.[0]?.message?.content;
+					let answer = "No answer generated.";
+					if (typeof raw === "string") answer = raw;
+					else if (Array.isArray(raw)) {
+						const text = raw.filter((b) => b && typeof b === "object" && b.type === "text").map((b) => b.text ?? "").join("\n").trim();
+						if (text) answer = text;
+					}
 					res.json({
 						answer,
 						sources
