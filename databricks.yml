@@ -1,0 +1,53 @@
+bundle:
+  name: asm-service-cockpit
+
+variables:
+  sql_warehouse_id:
+    description: SQL Warehouse ID
+  genie_space_id:
+    description: Default Genie Space ID
+  genie_space_name:
+    description: Genie Space display name
+  serving_endpoint_name:
+    description: Serving endpoint name
+
+resources:
+  apps:
+    app:
+      name: "asm-service-cockpit"
+      description: "ASM International Transactional Service Forecast Cockpit"
+      source_code_path: ./
+      git_repository:
+        provider: gitHub
+        url: https://github.com/danteliew6/asm-service-cockpit
+      user_api_scopes:
+        - dashboards.genie
+        - serving.serving-endpoints
+
+      # The resources which this app has access to.
+      resources:
+        - name: sql-warehouse
+          sql_warehouse:
+            id: ${var.sql_warehouse_id}
+            permission: CAN_USE
+        - name: genie-space
+          genie_space:
+            name: ${var.genie_space_name}
+            space_id: ${var.genie_space_id}
+            permission: CAN_RUN
+        - name: serving-endpoint
+          serving_endpoint:
+            name: ${var.serving_endpoint_name}
+            permission: CAN_QUERY
+
+targets:
+  default:
+    default: true
+    workspace:
+      host: https://fevm-dante-classic-stable.cloud.databricks.com
+
+    variables:
+      sql_warehouse_id: 114b2f7bfa1273b1
+      genie_space_id: 01f19ae2b6071465923891f321b92c78
+      genie_space_name: ASM Service Forecast Genie
+      serving_endpoint_name: databricks-claude-sonnet-5

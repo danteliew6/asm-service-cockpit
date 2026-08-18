@@ -1,0 +1,3 @@
+SELECT version_id, version_label, status
+FROM dante_classic_stable_catalog.asm_service_forecast.forecast_versions
+ORDER BY version_id
