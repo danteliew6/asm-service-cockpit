@@ -27,7 +27,7 @@ function Field({ label, className, children }: { label: string; className?: stri
 }
 
 const sparesTrendConfig = {
-  spares_revenue: { label: 'Spares (actual)', color: 'var(--color-chart-3)' },
+  spares_revenue: { label: 'Spares (actual)', color: 'var(--chart-1)' },
   spares_forecast: { label: 'Spares (forecast)', color: 'var(--color-muted-foreground)' },
 };
 const byLineConfig = { annual_spares: { label: 'Annual Spares', color: 'var(--color-chart-2)' } };
@@ -191,8 +191,8 @@ export function SparesForecastPage() {
                   <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} interval={2} />
                   <YAxis tickFormatter={(v) => usd(v)} tickLine={false} axisLine={false} width={52} tick={{ fontSize: 10 }} />
                   <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line dataKey="spares_revenue" stroke="var(--color-spares_revenue)" strokeWidth={2} dot={false} connectNulls />
-                  <Line dataKey="spares_forecast" stroke="var(--color-spares_forecast)" strokeWidth={2} strokeDasharray="5 4" dot={false} connectNulls />
+                  <Line dataKey="spares_revenue" stroke="var(--chart-1)" strokeWidth={2} dot={false} connectNulls />
+                  <Line dataKey="spares_forecast" stroke="var(--color-muted-foreground)" strokeWidth={2} strokeDasharray="5 4" dot={false} connectNulls />
                 </ComposedChart>
               </ChartContainer>
             )}
@@ -205,7 +205,7 @@ export function SparesForecastPage() {
                 <XAxis type="number" tickFormatter={(v) => usd(v)} tickLine={false} axisLine={false} tick={{ fontSize: 10 }} />
                 <YAxis type="category" dataKey="product_line" width={130} tickLine={false} axisLine={false} tick={{ fontSize: 11 }} />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="annual_spares" fill="var(--color-annual_spares)" radius={[0, 3, 3, 0]} />
+                <Bar dataKey="annual_spares" fill="var(--color-chart-2)" radius={[0, 3, 3, 0]} />
               </BarChart>
             </ChartContainer>
           </Card>

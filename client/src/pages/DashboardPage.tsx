@@ -65,11 +65,11 @@ function KpiCard({
 }
 
 const revenueChartConfig = {
-  actual: { label: 'Actual', color: 'var(--color-chart-3)' },
+  actual: { label: 'Actual', color: 'var(--chart-1)' },
   forecast: { label: 'Forecast', color: 'var(--color-muted-foreground)' },
 };
 const mixChartConfig = {
-  spares_revenue: { label: 'Spares', color: 'var(--color-chart-3)' },
+  spares_revenue: { label: 'Spares', color: 'var(--chart-1)' },
   labor_revenue: { label: 'Labor', color: 'var(--color-chart-2)' },
 };
 const perToolChartConfig = {
@@ -375,8 +375,8 @@ export function DashboardPage() {
                   <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} interval={2} />
                   <YAxis tickFormatter={(v) => usd(v)} tickLine={false} axisLine={false} width={52} tick={{ fontSize: 10 }} />
                   <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line dataKey="actual" stroke="var(--color-actual)" strokeWidth={2} dot={false} connectNulls />
-                  <Line dataKey="forecast" stroke="var(--color-forecast)" strokeWidth={2} strokeDasharray="5 4" dot={false} connectNulls />
+                  <Line dataKey="actual" stroke="var(--chart-1)" strokeWidth={2} dot={false} connectNulls />
+                  <Line dataKey="forecast" stroke="var(--color-muted-foreground)" strokeWidth={2} strokeDasharray="5 4" dot={false} connectNulls />
                 </ComposedChart>
               </ChartContainer>
             )}
@@ -394,8 +394,8 @@ export function DashboardPage() {
                   <XAxis dataKey="month_label" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} interval={2} />
                   <YAxis tickFormatter={(v) => usd(v)} tickLine={false} axisLine={false} width={52} tick={{ fontSize: 10 }} />
                   <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="spares_revenue" stackId="a" fill="var(--color-spares_revenue)" radius={[0, 0, 0, 0]} />
-                  <Bar dataKey="labor_revenue" stackId="a" fill="var(--color-labor_revenue)" radius={[2, 2, 0, 0]} />
+                  <Bar dataKey="spares_revenue" stackId="a" fill="var(--chart-1)" radius={[0, 0, 0, 0]} />
+                  <Bar dataKey="labor_revenue" stackId="a" fill="var(--chart-1)" fillOpacity={0.45} radius={[2, 2, 0, 0]} />
                 </BarChart>
               </ChartContainer>
             )}
@@ -412,15 +412,15 @@ export function DashboardPage() {
               <AreaChart data={monthlyNum} margin={{ left: 4, right: 8, top: 8, bottom: 0 }}>
                 <defs>
                   <linearGradient id="rpt" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="var(--color-revenue_per_tool)" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="var(--color-revenue_per_tool)" stopOpacity={0.02} />
+                    <stop offset="0%" stopColor="var(--color-success)" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="var(--color-success)" stopOpacity={0.02} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
                 <XAxis dataKey="month_label" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} interval={2} />
                 <YAxis tickFormatter={(v) => usd(v)} tickLine={false} axisLine={false} width={52} tick={{ fontSize: 10 }} />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Area dataKey="revenue_per_tool" stroke="var(--color-revenue_per_tool)" strokeWidth={2} fill="url(#rpt)" />
+                <Area dataKey="revenue_per_tool" stroke="var(--color-success)" strokeWidth={2} fill="url(#rpt)" />
               </AreaChart>
             </ChartContainer>
           )}
